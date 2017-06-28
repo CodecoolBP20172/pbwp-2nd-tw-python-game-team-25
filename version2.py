@@ -104,7 +104,10 @@ def main_menu():
 
 def create_action(action, settings):
     func = settings[action]['function']
-    result = func()
+    if action != 5:
+        result = func()
+    else:
+        result = func(settings[action]['value'])
     if result is not None:
         # settings[action][settings[action]['name']] = result
         settings[action]['value'] = result
@@ -264,7 +267,8 @@ def main():
                     'hitY': None,
                     'dirX': None,
                     'dirY': None
-                }
+                },
+                'function': choose_ai,
             },
             3: {
                 'name': 'game_mode',
