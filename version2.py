@@ -4,10 +4,9 @@ import sys
 import time
 
 
-def clear_screen(message=''):
+def clear_screen():
     subprocess.call(['tput', 'reset'])
     print_title('Battleship Version 2'.center(cols, ' '), '=')
-    print(message.center(cols, ' '))
 
 
 def reset_terminal(rows, cols):
@@ -216,8 +215,60 @@ def choose_ships(ships):
         return remove_ship_from_ships(ships)
 
 
-def start_game():
-    pass
+def get_coordinate_from_user(sizes, coordinate):
+    abc = 'ABCDEFGHIJKLOMN'
+    get_input = input('Coordinate: ')
+    get_input = get_input.split(':')
+    if len(get_input) == 2:
+        if get_input[0] in abc[:sizes[1]]:
+            try:
+                get_input[1] = int(get_input[1])
+                get_input[0] = abc.find(get_input[0])
+                get_input[1] -= 1
+                coordinate.append(get_input[0])
+                coordinate.append(get_input[1])
+                return None
+            except ValueError:
+                pass
+    return create_error_message('Invalid coordinate!')
+
+
+def show_battleground(battleground, own=True):
+    for i in range(-1, len(battleground)):
+        if i == -1:
+            abc = 'ABCDEFGHIJKLOMN'
+            print('%2s' % ' ', end=' ')
+            for j in range(len(battleground)):
+                print('\033[1m{}\033[0m'.format(abc[j]), end=' ')
+        else:
+            print('\033[1m%2d\033[0m' % (i + 1), end=' ')
+            for j in range(len(battleground[i])):
+                if battleground[i][j] == 0:
+                    print('\\')
+        print()
+
+
+def start_game(settings):
+    # Placing phase started
+    # Show the battleground and the ships
+    # Place the ships: ID, coordinate, rotation
+    # Check if the ship can place
+    # Place
+    player1 = create_battleground(10, 10)
+    message = ''
+    ships_placed = []
+    ships = settings[5]['value']
+    while len(ships_placed) < len(ships):
+        # Print out the battleground
+        # Print out the remaining ships
+        clear_screen()
+        print_message(message)
+        show_battleground(player1)
+        for index in range(len(ships)):
+            if index not in ships_placed:
+                print('{}:{}\t- {} wide'.format((index + 1), ships[index][0], ships[index][1]))
+        input()
+        pass
 
 
 def create_battleground(width, height):
@@ -270,7 +321,7 @@ def main():
             },
             4: {
                 'name': 'sizes',
-                'value': [10, 10],
+                'value': [10, 10],  # height, width
                 'function': choose_battleground_sizes,
                 'success': 'The battleground sizes updated successfully!'
             },
@@ -281,20 +332,23 @@ def main():
                 'success': 'The ships updated successfully!'
             }
         }
+        clear_screen()
+        start_game(settings)
+        """
         while True:
-            clear_screen(message)
+            clear_screen()
             game_datas(settings)
             action = main_menu()
-            message = create_warning_message("You returned back to the main menu!")
+            message = ''
             if action == 0:
                 game_exit()
             elif action in list(settings.keys()):
                 message = create_action(action, settings)
             elif action == 6:
-                start_game()
+                start_game(settings)
             else:
                 message = create_error_message('The input should be a number between 1-6!')
-                continue
+        """
     except KeyboardInterrupt:
         game_exit()
 
