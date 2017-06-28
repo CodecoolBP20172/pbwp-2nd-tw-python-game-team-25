@@ -20,6 +20,13 @@ def print_message(string):
     sys.stdout.flush()
 
 
+def game_exit():
+    print('\033[1;36m')
+    print_title('You exited from the game!'.center(cols, ' '), "=")
+    print('\033[0m')
+    exit()
+
+
 def single_line(cols, decorator):
     print(decorator * cols)
 
@@ -140,12 +147,7 @@ def get_input_from_user(input_type, start_int=0, end_int=1):
 def choose_player_number():
     clear_screen()
     print_title('Choose number of players'.center(cols, ' '), '-')
-    while True:
-        player_number = get_input_from_user('int', 1, 2)
-        if player_number:
-            return player_number
-        else:
-            return None
+    return get_input_from_user('int', 1, 2)
 
 
 def choose_ai_difficulty():
@@ -157,31 +159,20 @@ def choose_game_mode():
     print_title('Choose game mode'.center(cols, ' '), '-')
     print('1: Normal mode\n2: Strike mode')
     single_line(cols, '-')
-    while True:
-        game_mode = get_input_from_user('int', 1, 2)
-        if game_mode:
-            return game_mode
-        else:
-            return None
+    return get_input_from_user('int', 1, 2)
 
 
 def choose_battleground_sizes():
     clear_screen()
     print_title("Change battleground sizes".center(cols, " "), "-")
     print_title('Please give the width:', '-')
-    while True:
-        width = get_input_from_user('int', 7, 15)
-        if width:
-            break
-        else:
-            return None
+    width = get_input_from_user('int', 7, 15)
+    if width is None:
+        return None
     print_title('Please give the height:', '-')
-    while True:
-        height = get_input_from_user('int', 7, 15)
-        if height:
-            break
-        else:
-            return None
+    height = get_input_from_user('int', 7, 15)
+    if height is None:
+        return None
     return [height, width]
 
 
@@ -251,6 +242,7 @@ def main():
         MISSED = 1
         HIT = 2
 
+        # Defining the basic settings
         settings = {
             1: {
                 'name': 'player_number',
@@ -268,7 +260,7 @@ def main():
                     'dirX': None,
                     'dirY': None
                 },
-                'function': choose_ai,
+                'function': choose_ai_difficulty,
             },
             3: {
                 'name': 'game_mode',
@@ -294,12 +286,8 @@ def main():
             game_datas(settings)
             action = main_menu()
             message = create_warning_message("You returned back to the main menu!")
-            # Create actions and settings dictionary, where we stores the actions, and replace the elif section
             if action == 0:
-                print('\033[1;36m')
-                print_title('You exited from the game!'.center(cols, ' '), "=")
-                print('\033[0m')
-                exit()
+                game_exit()
             elif action in list(settings.keys()):
                 message = create_action(action, settings)
             elif action == 6:
@@ -308,10 +296,7 @@ def main():
                 message = create_error_message('The input should be a number between 1-6!')
                 continue
     except KeyboardInterrupt:
-        print('\033[1;36m')
-        print_title('You exited from the game!'.center(cols, ' '), "=")
-        print('\033[0m')
-        exit()
+        game_exit()
 
 
 main()
