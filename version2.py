@@ -108,7 +108,7 @@ def create_action(action, settings):
     if result is not None:
         # settings[action][settings[action]['name']] = result
         settings[action]['value'] = result
-        return settings[action]['success']
+        return create_success_message(settings[action]['success'])
     else:
         return create_warning_message('You have returned to the main menu!')
 
@@ -285,22 +285,6 @@ def main():
                 'success': 'The ships updated successfully!'
             }
         }
-
-        player_number = 1
-        ai = {
-            'difficulty': 'easy',
-            'onStrike': False,
-            'hitX': None,
-            'hitY': None,
-            'dirX': None,
-            'dirY': None
-        }
-        game_mode = 1
-        sizes = [10, 10]
-        ships = import_ships()
-        create_action(1, settings)
-        create_action(4, settings)
-        input()
         while True:
             clear_screen(message)
             game_datas(settings)
@@ -312,33 +296,8 @@ def main():
                 print_title('You exited from the game!'.center(cols, ' '), "=")
                 print('\033[0m')
                 exit()
-            # message = create_action(action, settings)
-            elif action == 1:
-                message = create_action()
-                result = choose_player_number()
-                if result is not None:
-                    player_number = result
-                    message = create_success_message(
-                        'Number of player updated successfully for {}!'.format(player_number))
-            elif action == 2:
-                ai['difficulty'] = choose_ai_difficulty()
-            elif action == 3:
-                result = choose_game_mode()
-                if result is not None:
-                    game_mode = result
-                    message = create_success_message('The game mode updated successfully!')
-            elif action == 4:
-                result = choose_battleground_sizes()
-                if result is not None:
-                    sizes = result
-                    message = create_success_message(
-                        'Battleground sizes updated successfully for {} x {}!'.format(
-                            sizes[1], sizes[0]))
-            elif action == 5:
-                result = choose_ships(ships)
-                if result is not None:
-                    ships = result
-                    message = create_success_message('Updated ships successfully!')
+            elif action in list(settings.keys()):
+                message = create_action(action, settings)
             elif action == 6:
                 start_game()
             else:
